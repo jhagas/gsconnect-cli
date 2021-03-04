@@ -37,9 +37,9 @@ err() {
 
 send() {
     cd "$gs"
-    device=$(./daemon.js -l)
-    [ -z "${device}" ] && echo -e "${R}No device connected!!${N}" && exit
-    list=$( echo $device | dmenu -p "Select Recieving Device:" -l 10 )
+    [ -z "$(./daemon.js -l)" ] && echo -e "${R}No device connected!!${N}" && exit
+
+    list=$(./daemon.js -a | sed '/false/d' | dmenu -p "Select Target Device (CTRL+C to exit):" -l 10)
     ./daemon.js -d $list --share-file="file://$files"
 }
 
