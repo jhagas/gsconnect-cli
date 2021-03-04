@@ -1,0 +1,87 @@
+#!/bin/env bash
+
+# color codes
+N="\033[0m"    # Reset
+R="\033[1;31m" # Red
+G="\033[1;32m" # Green
+B="\e[1m"      # Bold
+
+
+# Check Dependencies
+[ ! $(which readlink) ] && echo -e "${R}Please install dmenu!${N}" && exit 1
+[ ! $(which dmenu) ] && echo -e "${R}Please install dmenu!${N}" && exit 1
+
+
+# Defining Variables
+filename=$*
+gs=~/.local/share/gnome-shell/extensions/gsconnect@andyholmes.github.io/service/
+egs="${B}Please install gsconnect, https://extensions.gnome.org/extension/1319/gsconnect/${N}"
+files=$(readlink -f "$*")
+
+help() {
+    echo -e "${G}GSCONNECT SEND SCRIPT${N}"
+    echo -e "${R}This script will only works in Gnome Desktop Environtment!!${N}"
+    echo -e "if you're not using GNOME,"
+    echo -e "You may consider using ${B}KDE Connect${N} instead of Gsconnect\n"
+    echo -e "${B}USAGE:\t\t\t${G}gsconnect <OPTION> <path|filename>${N}"
+    echo -e "${B}OPTION:${N}\n-h or --help\t\tTo display this help"
+}
+
+
+err() {
+    echo -e "${R}ERROR!!${N}"
+    echo -e "There is no file named ${G}\"${filename}\"${N}"
+    exit
+}
+
+
+send() {
+    cd "$gs"
+    device=$(./daemon.js -l)
+    [ -z "${device}" ] && echo -e "${R}No device connected!!${N}" && exit
+    list=$( echo $device | dmenu -p "Select Recieving Device:" -l 10 )
+    ./daemon.js -d $list --share-file="file://$files"
+}
+
+
+
+# Detect if no argument
+[ -z "$1" ] && echo -e "No File To Send\nSee --help" && exit
+
+
+# Argument Parsing
+case $1 in
+    -h|--help)
+        help
+        exit
+        ;;
+    -*)
+        echo -e "${R}Invalid argument${N}"
+        exit
+        ;;
+esac
+
+
+# Invalid File
+[ ! -f "${files}" ] && err
+
+
+# Detect The Desktop Environtment
+DE=$(echo $XDG_CURRENT_DESKTOP)
+if [ "${DE##*:}" = "GNOME" ]
+    then
+        echo -e "${G}GNOME Environtment Detected${N}"
+    else
+        echo -e "${R}You're not Using GNOME Environtment${N}"
+        echo -e "You may consider using KDE Connect instead of Gsconnect"
+        exit
+fi
+
+
+# Detect if gsconnect is installed
+[ ! -d "$gs" ] && echo -e "$egs" && exit
+
+
+send
+echo "Sending your file.."
+
