@@ -2,6 +2,8 @@
 Did you use [GNOME](https://www.gnome.org/) and its [KDE Connect](https://kdeconnect.kde.org/) Implementation, [Gsconnect](https://extensions.gnome.org/extension/1319/gsconnect/)? But you want to transfer file to your android via terminal file manager (for example [nnn](https://github.com/jarun/nnn)), or even another GUI File Manager (in case you don't like nautilus).
 This is the answer for your need..
 
+> Check out my other android-linux integration CLI script, [wireless-scrcpy](https://github.com/jhagas/wireless-scrcpy) and [android-debloater](https://github.com/jhagas/android-debloater)
+
 ## Dependencies
 This script is using `dmenu` and `readlink`.
 
